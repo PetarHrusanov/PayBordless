@@ -23,6 +23,9 @@ public class ApplicationUser : IdentityUser, IAuditInfo, IDeletableEntity
     public virtual ICollection<IdentityUserRole<string>> Roles { get; set; }
     public virtual ICollection<IdentityUserClaim<string>> Claims { get; set; }
     public virtual ICollection<IdentityUserLogin<string>> Logins { get; set; }
+    
+    public virtual ICollection<Company> Companies { get; set; }
+    public virtual ICollection<Invoice> Invoices { get; set; }
 
 }
 

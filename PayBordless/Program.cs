@@ -1,8 +1,13 @@
 using PayBordless;
 using PayBordless.Data;
 using PayBordless.Data.Models;
+using PayBordless.Services.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services
+    .AddTransient<ITokenGeneratorService, TokenGeneratorService>()
+    .AddTransient<IIdentityService, IdentityService>();
 
 builder.Services
     .AddWebService<ApplicationDbContext>(builder.Configuration);
