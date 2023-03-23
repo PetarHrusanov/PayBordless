@@ -21,7 +21,12 @@ public class IdentityController : ApiController
     {
         
         await _identity.Register(userInput);
-        return await Login(userInput);
+        var loginModel = new UserLoginModel
+        {
+            Email = userInput.Email,
+            Password = userInput.Password
+        };
+        return await Login(loginModel);
 
     }
     
@@ -31,8 +36,6 @@ public class IdentityController : ApiController
         await _identity.RegisterWithRole(userWithRoleInputModel);
         
         // if (!result.Succeeded) return BadRequest(result.Errors);
-        
-        
     }
     
     [HttpPost]
@@ -51,16 +54,30 @@ public class IdentityController : ApiController
     [HttpGet]
     public async Task<UsersIds[] > GetUsers() 
         => await _identity.GetUsers();
+    
+    [HttpGet]
+    public async  Task<ActionResult<UsernameModel>> Username()
+    {
+        var userId = _currentUser.UserId;
+        var user = await _identity.GetUserById(userId);
+        var userName = new UsernameModel()
+        {
+            Name = user.UserName
+        };
+        return userName;
+    }
    
 
     [HttpPost]
-    public async Task<ActionResult<UserOutputModel>> Login(UserInputModel input)
+    public async Task<ActionResult<UserOutputModel>> Login(UserLoginModel input)
     {
         var result = await _identity.Login(input);
 
         if (!result.Succeeded) return BadRequest(result.Errors);
+ 
+        var kur = new UserOutputModel(result.Data.Token, result.Data.User);
 
-        return new UserOutputModel(result.Data.Token);
+        return kur;
     }
 
     [HttpPut]

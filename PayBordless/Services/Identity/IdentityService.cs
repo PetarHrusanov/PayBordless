@@ -38,7 +38,7 @@ public class IdentityService : IIdentityService
         var user = new ApplicationUser
         {
             Email = userInput.Email,
-            UserName = userInput.Email
+            UserName = userInput.Name
         };
 
         var identityResult = await _userManager.CreateAsync(user, userInput.Password);
@@ -47,6 +47,9 @@ public class IdentityService : IIdentityService
             ? Result<ApplicationUser>.SuccessWith(user)
             : Result<ApplicationUser>.Failure(identityResult.Errors.Select(e => e.Description));
     }
+
+    public async Task<ApplicationUser> GetUserById(string userId)
+        => await _userManager.FindByIdAsync(userId);
 
     public async Task RegisterWithRole(UserWithRoleInputModel userInput)
     {
@@ -60,7 +63,7 @@ public class IdentityService : IIdentityService
         await _userManager.AddToRoleAsync(user, userInput.Role);
     }
 
-    public async Task<Result<UserOutputModel>> Login(UserInputModel userInput)
+    public async Task<Result<UserOutputModel>> Login(UserLoginModel userInput)
     {
         var user = await _userManager.FindByEmailAsync(userInput.Email);
         if (user == null) return InvalidErrorMessage;
@@ -72,7 +75,7 @@ public class IdentityService : IIdentityService
 
         var token = _jwtTokenGenerator.GenerateToken(user, roles);
 
-        return new UserOutputModel(token);
+        return new UserOutputModel(token, user.UserName);
     }
 
     public async Task CreateRole(string input)
