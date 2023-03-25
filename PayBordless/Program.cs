@@ -5,6 +5,7 @@ using PayBordless.Data.Seeding;
 using PayBordless.Models.Identity;
 using PayBordless.Services.Company;
 using PayBordless.Services.Identity;
+using PayBordless.Services.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,7 @@ builder.Services
     .AddTransient<ITokenGeneratorService, TokenGeneratorService>()
     .AddTransient<IIdentityService, IdentityService>()
     .AddTransient<ICompanyService, CompanyService>()
+    .AddTransient<IServiceService, ServiceService>()
     ;
 
 builder.Services
