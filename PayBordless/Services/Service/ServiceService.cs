@@ -54,4 +54,12 @@ public class ServiceService : IServiceService
         
         return Result.Success;
     }
+
+    public async Task<Result> Delete(int id)
+    {
+        var activity = await _db.Services.FirstOrDefaultAsync(m => m.Id == id);
+        _db.Remove(activity);
+        await _db.SaveChangesAsync();
+        return Result.Success;
+    }
 }

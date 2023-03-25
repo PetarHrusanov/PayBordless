@@ -48,18 +48,17 @@ public class ServiceController : ApiController
         // if (userId != inputModel.UserId) return BadRequest("Incorrect user");
         await _serviceService.Edit(inputModel);
         return Result.Success;
-    
     }
     
-    
-    //
-    // [HttpGet("{companyId}/services")]
-    // [Authorize]
-    // public async Task<ICollection<SerivceOutputModel>> GetServicesById(int companyId)
-    // {
-    //     var services = await _companyService.GetAllServices();
-    //     services = services.Where(c => c.CompanyId == companyId).ToList();
-    //     return services;
-    // }
+    [HttpDelete]
+    [Route(Id)]
+    [Authorize]
+    public async Task<ActionResult> Delete(int id)
+    {
+        var userId = _currentUser.UserId;
+        // if (userId != inputModel.UserId) return BadRequest("Incorrect user");
+        await _serviceService.Delete(id);
+        return Result.Success;
+    }
 
 }
