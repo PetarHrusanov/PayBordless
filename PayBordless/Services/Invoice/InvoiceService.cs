@@ -51,6 +51,20 @@ public class InvoiceService : IInvoiceService
             UserId = i.UserId
         }).ToListAsync();
 
+    public async Task<ICollection<InvoiceOutputModel>> GetByCompanyCreatorId(string userId)
+        =>  await _db.Invoices.Where(i=>i.Service.Company.UserId==userId).Select(i => new InvoiceOutputModel 
+        {
+            Id = i.Id,
+            ServiceId = i.ServiceId,
+            ServiceName = i.Service.Name,
+            Quantity = i.Quantity,
+            Total = i.Total,
+            RecipientId = i.RecipientId,
+            RecipientName = i.Recipient.Name,
+            Approved = i.Approved,
+            UserId = i.UserId
+        }).ToListAsync();
+
     public async Task<Result> Edit(InvoiceEditModel editModel)
     {
         var invoice = await _db.Invoices.FindAsync(editModel.Id);
@@ -84,5 +98,18 @@ public class InvoiceService : IInvoiceService
         await _db.SaveChangesAsync();
 
         return Result.Success;
+    }
+    
+    public async Task SetApprovalStatus(int invoiceId, bool isApproved)
+    {
+        var invoice = await _db.Invoices.FindAsync(invoiceId);
+        if (invoice == null)
+        {
+            throw new ArgumentException("Invoice not found");
+        }
+
+        invoice.Approved = isApproved;
+        _db.Invoices.Update(invoice);
+        await _db.SaveChangesAsync();
     }
 }

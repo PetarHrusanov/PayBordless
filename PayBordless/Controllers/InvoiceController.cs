@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using PayBordless.Models.Invoice;
 using PayBordless.Services.Invoice;
 
-
 public class InvoiceController : ApiController
 {
     private readonly ICurrentUserService _currentUser;
@@ -41,8 +40,8 @@ public class InvoiceController : ApiController
     public async Task<ICollection<InvoiceOutputModel>> GetUnapprovedByUserId()
     {
         var userId = _currentUser.UserId;
-        var invoices = await _invoiceService.GetAll();
-        var userInvoices = invoices.Where(c => c.UserId == userId && c.Approved==null).ToList();
+        var invoices = await _invoiceService.GetByCompanyCreatorId(userId);
+        var userInvoices = invoices.Where(c => c.Approved==null).ToList();
         return userInvoices;
     }
 
@@ -71,4 +70,16 @@ public class InvoiceController : ApiController
         await _invoiceService.Delete(id);
         return Result.Success;
     }
+    
+    [HttpPut]
+    [Authorize]
+    public async Task<ActionResult> Approve(InvoiceApprovalModel approvalModel)
+    {
+        var userId = _currentUser.UserId;
+        // Add any necessary authorization checks here, e.g., checking user roles
+
+        await _invoiceService.SetApprovalStatus(approvalModel.Id, approvalModel.IsApproved);
+        return Result.Success;
+    }
+    
 }

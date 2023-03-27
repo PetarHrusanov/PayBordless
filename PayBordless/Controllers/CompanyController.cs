@@ -40,7 +40,6 @@ namespace PayBordless.Controllers
         }
         
         [HttpGet]
-        [Authorize]
         public async Task<ICollection<CompanyOutputModel>> GetAll() 
             => await _companyService.GetAll();
 
