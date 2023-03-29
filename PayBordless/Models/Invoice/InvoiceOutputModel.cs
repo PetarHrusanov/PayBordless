@@ -7,6 +7,9 @@ public class InvoiceOutputModel
     public string ServiceName { get; set; }
     public int Quantity { get; set; }
     public decimal Total { get; set; }
+    
+    public int IssuerId { get; set; }
+    public string IssuerName { get; set; }
     public int RecipientId { get; set; }
     public string RecipientName { get; set; }
     public bool? Approved { get; set; }

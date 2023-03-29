@@ -10,5 +10,6 @@ public interface ICompanyService
     Task<ICollection<CompanyOutputModel>> GetAll();
     
     Task<ICollection<SerivceOutputModel>> GetAllServices();
+    Task<Result> Delete(int id);
     
 }

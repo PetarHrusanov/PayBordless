@@ -10,13 +10,11 @@ namespace PayBordless.Controllers
     {
         private readonly ICurrentUserService _currentUser;
         private readonly ICompanyService _companyService;
-        private readonly ILogger<CompanyController> _logger;
 
-        public CompanyController(ILogger<CompanyController> logger, ICurrentUserService currentUser, ICompanyService companyService)
+        public CompanyController(ICurrentUserService currentUser, ICompanyService companyService)
         {
             _currentUser = currentUser;
             _companyService = companyService;
-            _logger = logger;
         }
 
         [HttpPost]
@@ -61,6 +59,17 @@ namespace PayBordless.Controllers
             var services = await _companyService.GetAllServices();
             services = services.Where(c => c.CompanyId == id).ToList();
             return services;
+        }
+        
+        [HttpDelete]
+        [Route(Id)]
+        [Authorize]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var userId = _currentUser.UserId;
+            // if (userId != inputModel.UserId) return BadRequest("Incorrect user");
+            await _companyService.Delete(id);
+            return Result.Success;
         }
 
     }

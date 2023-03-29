@@ -65,4 +65,19 @@ public class CompanyService : ICompanyService
             Price = c.Price,
             CompanyId = c.CompanyId,
         }).ToListAsync();
+
+    public async Task<Result> Delete(int id)
+    {
+        var company = await _db.Companies.FindAsync(id);
+
+        if (company == null)
+        {
+            return Result.Failure("Invoice not found.");
+        }
+
+        _db.Companies.Remove(company);
+        await _db.SaveChangesAsync();
+
+        return Result.Success;
+    }
 }
