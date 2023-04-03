@@ -16,24 +16,24 @@ using static  Common.Constants;
 
 public class AdministratorSeeder : ISeeder
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly ApplicationDbContext _db;
     private readonly IServiceProvider _serviceProvider;
     private readonly AdminSettings _adminSettings;
 
     public AdministratorSeeder(
-        ApplicationDbContext dbContext,
+        ApplicationDbContext db,
         IServiceProvider serviceProvider,
         IOptions<AdminSettings> adminSettings
         )
     {
-        _dbContext = dbContext;
+        _db = db;
         _serviceProvider = serviceProvider;
         _adminSettings = adminSettings.Value;
     }
 
     public void SeedAsync()
     {
-        if (_dbContext.Users.Any())
+        if (_db.Users.Any())
         {
             return;
         }
@@ -52,7 +52,7 @@ public class AdministratorSeeder : ISeeder
                 await userManager.CreateAsync(user, _adminSettings.AdminPassword);
                 await userManager.AddToRoleAsync(user, AdministratorRoleName);
 
-                await _dbContext.SaveChangesAsync();
+                await _db.SaveChangesAsync();
             })
             .GetAwaiter()
             .GetResult();

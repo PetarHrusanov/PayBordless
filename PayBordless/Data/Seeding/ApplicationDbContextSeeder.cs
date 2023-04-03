@@ -12,39 +12,41 @@ using Microsoft.Extensions.Options;
 
 public class ApplicationDbContextSeeder : ISeeder
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly ApplicationDbContext _db;
     private readonly IServiceProvider _serviceProvider;
     private readonly IOptions<AdminSettings> _adminSettings;
 
     public ApplicationDbContextSeeder(
-        ApplicationDbContext dbContext,
+        ApplicationDbContext db,
         IServiceProvider serviceProvider,
         IOptions<AdminSettings> adminSettings
         )
     {
-        _dbContext = dbContext;
+        _db = db;
         _serviceProvider = serviceProvider;
         _adminSettings = adminSettings;
     }
         
     public void SeedAsync()
     {
-        if (_dbContext == null)
+        if (_db == null)
         {
-            throw new ArgumentNullException(nameof(_dbContext));
+            throw new ArgumentNullException(nameof(_db));
         }
 
         if (_serviceProvider == null)
         {
             throw new ArgumentNullException(nameof(_serviceProvider));
         }
+        
 
         var logger = (_serviceProvider.GetService<ILoggerFactory>() ?? throw new InvalidOperationException()).CreateLogger(typeof(ApplicationDbContextSeeder));
 
         var seeders = new List<ISeeder>
         {
             new RolesSeeder(_serviceProvider),
-            new AdministratorSeeder(_dbContext, _serviceProvider, _adminSettings)
+            new AdministratorSeeder(_db, _serviceProvider, _adminSettings),
+            new DataSeeder(_serviceProvider)
         };
 
         foreach (var seeder in seeders)
@@ -52,7 +54,7 @@ public class ApplicationDbContextSeeder : ISeeder
             Task.Run(async () =>
                 {
                     seeder.SeedAsync();
-                    await _dbContext.SaveChangesAsync();
+                    await _db.SaveChangesAsync();
                     logger.LogInformation($"Seeder {seeder.GetType().Name} done.");
                 })
                 .GetAwaiter()
