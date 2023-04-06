@@ -36,6 +36,8 @@ public class ServiceService : IServiceService
             Name = s.Name,
             CompanyName = s.Company.Name,
             CompanyId = s.CompanyId,
+            Owner = s.Company.Owner,
+            Vat = s.Company.VAT,
             Price = s.Price,
             UserId = s.Company.UserId
         }).ToListAsync();

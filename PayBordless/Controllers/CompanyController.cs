@@ -66,8 +66,7 @@ namespace PayBordless.Controllers
         [Authorize]
         public async Task<ActionResult> Delete(int id)
         {
-            var userId = _currentUser.UserId;
-            // if (userId != inputModel.UserId) return BadRequest("Incorrect user");
+
             await _companyService.Delete(id);
             return Result.Success;
         }
